@@ -513,6 +513,29 @@
                     Returns the password.
                 </para>
 
+                <funcsynopsis id="shout_set_authorization_token">
+                    <funcprototype>
+                        <funcdef>int <function>shout_set_authorization_token</function></funcdef>
+                        <paramdef><type>shout_t</type> *<parameter>self</parameter></paramdef>
+                        <paramdef>const char *<parameter>token</parameter></paramdef>
+                    </funcprototype>
+                </funcsynopsis>
+                <para>
+                    Sets the opaque authorization token to authenticate to the server with. If this parameter
+                    is set, it will be used instead of default user/password basic auth for http connections.
+                    <emphasis>Only used for HTTP</emphasis>
+                </para>
+
+                <funcsynopsis id="shout_get_authorization_token">
+                    <funcprototype>
+                        <funcdef>const char *<function>shout_get_authorization_token</function></funcdef>
+                        <paramdef><type>shout_t</type> *<parameter>self</parameter></paramdef>
+                    </funcprototype>
+                </funcsynopsis>
+                <para>
+                    Returns the authorization token, if any was set.
+                </para>
+
                 <funcsynopsis id="shout_set_protocol">
                     <funcprototype>
                         <funcdef>int <function>shout_set_protocol</function></funcdef>

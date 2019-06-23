@@ -69,6 +69,34 @@ static char *shout_http_basic_authorization(shout_t *self)
     return in;
 }
 
+static char *shout_http_token_authorization(shout_t *self)
+{
+    char *result;
+    int   len;
+
+    if (!self || !self->authorization_token)
+        return NULL;
+
+    len = strlen(self->authorization_token) + 25;
+    if (!(result = malloc(len))) {
+        return NULL;
+    }
+    snprintf(result, len, "Authorization: Bearer %s\r\n", self->authorization_token);
+
+    return result;
+}
+
+static char *shout_http_authorization(shout_t *self)
+{
+    char *result = NULL;
+
+    result = shout_http_token_authorization(self);
+    if (result)
+        return result;
+
+    return shout_http_basic_authorization(self);
+}
+
 static shout_connection_return_state_t shout_parse_http_select_next_state(shout_t *self, shout_connection_t *connection, int can_reuse, shout_http_protocol_state_t state)
 {
     if (!can_reuse) {
@@ -83,7 +111,7 @@ static shout_connection_return_state_t shout_parse_http_select_next_state(shout_
 
 static shout_connection_return_state_t shout_create_http_request_source(shout_t *self, shout_connection_t *connection, int auth, int poke)
 {
-    char        *basic_auth;
+    char        *authorization;
     char        *ai;
     int          ret = SHOUTERR_MALLOC;
     util_dict   *dict;
@@ -110,14 +138,14 @@ static shout_connection_return_state_t shout_create_http_request_source(shout_t 
             if (shout_queue_printf(connection, "SOURCE %s HTTP/1.0\r\n", mount))
                 break;
         }
-        if (self->password && auth) {
-            if (! (basic_auth = shout_http_basic_authorization(self)))
+        if ((self->authorization_token || self->password) && auth) {
+            if (! (authorization = shout_http_authorization(self)))
                 break;
-            if (shout_queue_str(connection, basic_auth)) {
-                free(basic_auth);
+            if (shout_queue_str(connection, authorization)) {
+                free(authorization);
                 break;
             }
-            free(basic_auth);
+            free(authorization);
         }
         if (shout_queue_printf(connection, "Host: %s:%i\r\n", self->host, self->port))
             break;

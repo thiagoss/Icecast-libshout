@@ -229,6 +229,8 @@ struct shout {
     char *dumpfile;
     /* username to use for HTTP auth. */
     char *user;
+    /* authorization token for HTTP auth. */
+    char *authorization_token;
     /* is this stream private? */
     int public;
 
