@@ -155,6 +155,9 @@ const char *shout_get_user(shout_t *self);
 int shout_set_password(shout_t *, const char *password);
 const char *shout_get_password(shout_t *self);
 
+int shout_set_authorization_token(shout_t *self, const char *token);
+const char *shout_get_authorization_token(shout_t *self);
+
 /* Set a client certificate for TLS connections.
  * This must be in PEM format with both cert and private key in the same file.
  * Default: none. */

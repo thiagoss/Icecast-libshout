@@ -60,6 +60,34 @@ char *shout_http_basic_authorization(shout_t *self)
 	return in;
 }
 
+static char *shout_http_token_authorization(shout_t *self)
+{
+    char *result;
+    int   len;
+
+    if (!self || !self->authorization_token)
+        return NULL;
+
+    len = strlen(self->authorization_token) + 25;
+    if (!(result = malloc(len))) {
+        return NULL;
+    }
+    snprintf(result, len, "Authorization: Bearer %s\r\n", self->authorization_token);
+
+    return result;
+}
+
+static char *shout_http_authorization(shout_t *self)
+{
+    char *result = NULL;
+
+    result = shout_http_token_authorization(self);
+    if (result)
+        return result;
+
+    return shout_http_basic_authorization(self);
+}
+
 int shout_create_http_request(shout_t *self)
 {
 	char *auth;
@@ -92,8 +120,8 @@ int shout_create_http_request(shout_t *self)
 	do {
 		if (shout_queue_printf(self, "SOURCE %s HTTP/1.0\r\n", self->mount))
 			break;
-		if (self->password && (self->server_caps & LIBSHOUT_CAP_GOTCAPS)) {
-			if (! (auth = shout_http_basic_authorization(self)))
+		if ((self->password || self->authorization_token) && (self->server_caps & LIBSHOUT_CAP_GOTCAPS)) {
+			if (! (auth = shout_http_authorization(self)))
 				break;
 			if (shout_queue_str(self, auth)) {
 				free(auth);

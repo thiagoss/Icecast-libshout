@@ -742,6 +742,31 @@ const char *shout_get_user(shout_t *self)
 	return self->user;
 }
 
+int shout_set_authorization_token(shout_t *self, const char *token)
+{
+	if (!self)
+		return SHOUTERR_INSANE;
+
+	if (self->state != SHOUT_STATE_UNCONNECTED)
+		return self->error = SHOUTERR_CONNECTED;
+
+    if (self->authorization_token)
+        free(self->authorization_token);
+
+    if ( !(self->authorization_token = _shout_util_strdup(token)) )
+        return self->error = SHOUTERR_MALLOC;
+
+    return self->error = SHOUTERR_SUCCESS;
+}
+
+const char *shout_get_authorization_token(shout_t *self)
+{
+    if (!self)
+        return NULL;
+
+    return self->authorization_token;
+}
+
 int shout_set_description(shout_t *self, const char *description)
 {
 	return shout_set_meta(self, "description", description);

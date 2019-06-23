@@ -106,6 +106,8 @@ struct shout {
 	int port;
 	/* login password for the server */
 	char *password;
+    /* authorization token for HTTP auth. */
+    char *authorization_token;
 	/* server protocol to use */
 	unsigned int protocol;
 	/* type of data being sent */
