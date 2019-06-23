@@ -229,6 +229,8 @@ struct shout {
     char *dumpfile;
     /* username to use for HTTP auth. */
     char *user;
+    /* authorization token for HTTP auth. */
+    char *authorization_token;
     /* is this stream private? */
     int public;
 
@@ -323,7 +325,7 @@ extern const shout_protocol_impl_t *shout_roaraudio_impl;
 shout_connection_return_state_t shout_get_xaudiocast_response(shout_t *self, shout_connection_t *connection);
 shout_connection_return_state_t shout_parse_xaudiocast_response(shout_t *self, shout_connection_t *connection);
 
-/* containsers */
+/* containers */
 int shout_open_ogg(shout_t *self);
 int shout_open_mp3(shout_t *self);
 int shout_open_webm(shout_t *self);

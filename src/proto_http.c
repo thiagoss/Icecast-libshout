@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #ifdef HAVE_STRINGS_H
 #   include <strings.h>
@@ -67,6 +68,38 @@ static char *shout_http_basic_authorization(shout_t *self)
     free(out);
 
     return in;
+}
+
+static char *shout_http_token_authorization(shout_t *self)
+{
+    char *result;
+    int   len;
+
+    if (!self || !self->authorization_token)
+        return NULL;
+
+    len = strlen(self->authorization_token) + 25;
+    if (!(result = malloc(len))) {
+        return NULL;
+    }
+    snprintf(result, len, "Authorization: Bearer %s\r\n", self->authorization_token);
+
+    return result;
+}
+
+char *shout_http_authorization(shout_t *self)
+{
+    char *result = NULL;
+
+    result = shout_http_token_authorization(self);
+    if (result)
+        return result;
+
+    return shout_http_basic_authorization(self);
+}
+
+static bool shout_has_auth_parameters(shout_t *self) {
+    return self->authorization_token || self->password;
 }
 
 static shout_connection_return_state_t shout_parse_http_select_next_state(shout_t *self, shout_connection_t *connection, int can_reuse, shout_http_protocol_state_t state)
@@ -110,8 +143,9 @@ static shout_connection_return_state_t shout_create_http_request_source(shout_t 
             if (shout_queue_printf(connection, "SOURCE %s HTTP/1.0\r\n", mount))
                 break;
         }
-        if (self->password && auth) {
-            if (! (basic_auth = shout_http_basic_authorization(self)))
+        if (shout_has_auth_parameters(self) && auth) {
+            basic_auth = shout_http_authorization(self);
+            if (!basic_auth)
                 break;
             if (shout_queue_str(connection, basic_auth)) {
                 free(basic_auth);
@@ -207,8 +241,9 @@ static shout_connection_return_state_t shout_create_http_request_generic(shout_t
                 break;
         }
 
-        if (self->password && auth) {
-            if (! (basic_auth = shout_http_basic_authorization(self)))
+        if (shout_has_auth_parameters(self) && auth) {
+            basic_auth = shout_http_authorization(self);
+            if (!basic_auth)
                 break;
             if (shout_queue_str(connection, basic_auth)) {
                 free(basic_auth);
