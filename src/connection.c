@@ -567,7 +567,7 @@ int                 shout_connection_connect(shout_connection_t *con, shout_t *s
         shout_connection_set_nonblocking(con, shout_get_nonblocking(shout));
 
     port = shout->port;
-    if (shout_get_protocol(shout) == SHOUT_PROTOCOL_ICY)
+    if (con->impl == shout_icy_impl)
         port++;
 
     if (con->nonblocking == SHOUT_BLOCKING_NONE) {
