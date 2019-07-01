@@ -120,7 +120,7 @@ int shout_create_http_request(shout_t *self)
 	do {
 		if (shout_queue_printf(self, "SOURCE %s HTTP/1.0\r\n", self->mount))
 			break;
-		if ((self->password || self->authorization_token) && (self->server_caps & LIBSHOUT_CAP_GOTCAPS)) {
+		if (self->password || self->authorization_token) {
 			if (! (auth = shout_http_authorization(self)))
 				break;
 			if (shout_queue_str(self, auth)) {
