@@ -189,7 +189,7 @@ int shout_tls_recoverable(shout_tls_t *tls);
 #endif
 
 /* protocols */
-char *shout_http_basic_authorization(shout_t *self);
+char *shout_http_authorization(shout_t *self);
 int shout_create_http_request(shout_t *self);
 int shout_create_http_request_upgrade(shout_t *self, const char *proto);
 int shout_get_http_response(shout_t *self);

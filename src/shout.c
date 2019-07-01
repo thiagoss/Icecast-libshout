@@ -348,7 +348,7 @@ int shout_set_metadata(shout_t *self, shout_metadata_t *metadata)
 		snprintf(request, request_len, request_template, self->password, encvalue, shout_get_agent(self));
 	break;
 	case SHOUT_PROTOCOL_HTTP:
-		auth = shout_http_basic_authorization(self);
+		auth = shout_http_authorization(self);
 
 		request_template = "GET /admin/metadata?mode=updinfo&mount=%s&%s HTTP/1.0\r\nUser-Agent: %s\r\n%s\r\n";
 		request_len = strlen(request_template) + strlen(self->mount) + strlen(encvalue) + strlen(shout_get_agent(self)) + 1;

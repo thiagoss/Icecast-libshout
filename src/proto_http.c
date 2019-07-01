@@ -34,7 +34,7 @@
 #include "shout_private.h"
 #include "common/httpp/httpp.h"
 
-char *shout_http_basic_authorization(shout_t *self)
+static char *shout_http_basic_authorization(shout_t *self)
 {
 	char *out, *in;
 	int len;
@@ -56,8 +56,8 @@ char *shout_http_basic_authorization(shout_t *self)
 	}
 	snprintf(in, len, "Authorization: Basic %s\r\n", out);
 	free(out);
-	
-	return in;
+
+    return in;
 }
 
 static char *shout_http_token_authorization(shout_t *self)
@@ -77,7 +77,7 @@ static char *shout_http_token_authorization(shout_t *self)
     return result;
 }
 
-static char *shout_http_authorization(shout_t *self)
+char *shout_http_authorization(shout_t *self)
 {
     char *result = NULL;
 
